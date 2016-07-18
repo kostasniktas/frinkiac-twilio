@@ -52,3 +52,7 @@ https://frinkiac.com/api/caption?e=S01E07&t=271338
 
 https://frinkiac.com/meme/S07E08/12244?lines=wow%20there%0Aguys%0AMORE%20OWRDS%0AANDSOME%20MORE%0AHOW%20FAR
 (actual image)
+
+https://frinkiac.com/gif/S07E08/11000/20169.gif?lines=wowthere
+(gif)
+(that's ep/ms_start/ms_end, 10 seconds max)
