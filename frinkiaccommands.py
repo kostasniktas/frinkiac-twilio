@@ -11,6 +11,11 @@ donuts
 """
 
 def do_stuff(full_query):
+    """
+    Take a full query (with commands and query) and actually do the thing.
+
+    Returns a response for the user.
+    """
     if full_query is None or full_query.strip() == "":
         return _build_error_response("You can't ask me to search for nothing!")
 
@@ -21,7 +26,6 @@ def do_stuff(full_query):
     for i in pieces:
         if not i.startswith("#"):
             break
-        cmdcount += 1
         if i == "#random":
             options["random"] = True
         elif i == "#gif":
@@ -30,11 +34,15 @@ def do_stuff(full_query):
             options["caption"] = False
         elif i == "#help":
             options["help"] = True
+        cmdcount += 1
 
     if options["help"]:
         return _build_response(USAGE, None)
 
-    query = full_query.split(None, cmdcount)[cmdcount:]
+    if cmdcount >= len(pieces):
+        query = None
+    else:
+        query = full_query.split(None, cmdcount)[cmdcount]
     print "DEBUG", "OPTIONS:", options, "QUERY:", query
     response = _get_full_response(query,
                     caption_on_image = options["caption"],

@@ -32,6 +32,7 @@ def query_all_frames(query):
     if not r.ok:
         raise Exception("Bad times during a query [{}]".format(query)) #TODO
     result = r.json()
+    print "DEBUG FOUND {} RESULTS FOR {}".format(len(result), query)
     return [{"id": i["Id"], "episode": i["Episode"], "timestamp": i["Timestamp"]}
                 for i in result]
 
@@ -75,5 +76,6 @@ def get_full_image_url(frame, caption=False):
         return "{}?{}".format(url, urllib.urlencode({"lines": fix_captions(captions)}))
     return url
 
+#TODO: Maybe just take the first line
 def fix_captions(captions):
     return "\n".join(captions) #TODO
