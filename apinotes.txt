@@ -1,0 +1,54 @@
+https://frinkiac.com/api/random
+
+
+https://frinkiac.com/api/search?q=d%27oh
+[{"Id":696819,"Episode":"S06E06","Timestamp":141924},
+ {"Id":565655,"Episode":"S05E07","Timestamp":275574},
+ {"Id":1661464,"Episode":"S12E14","Timestamp":1327117},
+ {"Id":2078001,"Episode":"S04E05","Timestamp":187720},
+ {"Id":1827734,"Episode":"S13E22","Timestamp":10802},
+ {"Id":869511,"Episode":"S07E08","Timestamp":12244},
+ {"Id":1731418,"Episode":"S13E05","Timestamp":977185},
+ {"Id":1489780,"Episode":"S11E08","Timestamp":61360},
+ {"Id":1997652,"Episode":"S15E09","Timestamp":348223},
+ {"Id":769692,"Episode":"S06E17","Timestamp":1184432},
+ {"Id":1724069,"Episode":"S13E04","Timestamp":708374},
+ {"Id":869512,"Episode":"S07E08","Timestamp":12461},
+ ...
+]
+
+https://frinkiac.com/api/caption?e=S01E07&t=271338
+{"Episode":{"Id":342,"Key":"S01E07","Season":1,"EpisodeNumber":7,"Title":"The Call of the Simpsons","Director":"Wesley Archer","Writer":"John Swartzwelder","OriginalAirDate":"18-Feb-90","WikiLink":"https://en.wikipedia.org/wiki/The_Call_of_the_Simpsons"},"Frame":{"Id":41076,"Episode":"S01E07","Timestamp":271338},"Subtitles":[{"Id":3830,"RepresentativeTimestamp":268502,"Episode":"S01E07","StartTimestamp":267100,"EndTimestamp":270133,"Content":"BUT I DON'T OWN THE PLACE, EVEN THOUGH MY NAME'S UP THERE.","Language":"en"},{"Id":3831,"RepresentativeTimestamp":271171,"Episode":"S01E07","StartTimestamp":270133,"EndTimestamp":272467,"Content":"LONG STORY, BUT THAT DOESN'T MATTER.","Language":"en"},{"Id":3832,"RepresentativeTimestamp":273007,"Episode":"S01E07","StartTimestamp":272467,"EndTimestamp":274166,"Content":"I'M GONNA HAVE TO RUN IT THOUGH THE COMPUTER.","Language":"en"}],"Nearby":[{"Id":41072,"Episode":"S01E07","Timestamp":270838},{"Id":41075,"Episode":"S01E07","Timestamp":271005},{"Id":41073,"Episode":"S01E07","Timestamp":271171},{"Id":41076,"Episode":"S01E07","Timestamp":271338},{"Id":41077,"Episode":"S01E07","Timestamp":271505},{"Id":41088,"Episode":"S01E07","Timestamp":271672},{"Id":41080,"Episode":"S01E07","Timestamp":271839}]}
+(after piped jq '.Subtitles')
+[
+  {
+    "Id": 3830,
+    "RepresentativeTimestamp": 268502,
+    "Episode": "S01E07",
+    "StartTimestamp": 267100,
+    "EndTimestamp": 270133,
+    "Content": "BUT I DON'T OWN THE PLACE, EVEN THOUGH MY NAME'S UP THERE.",
+    "Language": "en"
+  },
+  {
+    "Id": 3831,
+    "RepresentativeTimestamp": 271171,
+    "Episode": "S01E07",
+    "StartTimestamp": 270133,
+    "EndTimestamp": 272467,
+    "Content": "LONG STORY, BUT THAT DOESN'T MATTER.",
+    "Language": "en"
+  },
+  {
+    "Id": 3832,
+    "RepresentativeTimestamp": 273007,
+    "Episode": "S01E07",
+    "StartTimestamp": 272467,
+    "EndTimestamp": 274166,
+    "Content": "I'M GONNA HAVE TO RUN IT THOUGH THE COMPUTER.",
+    "Language": "en"
+  }
+]
+
+https://frinkiac.com/meme/S07E08/12244?lines=wow%20there%0Aguys%0AMORE%20OWRDS%0AANDSOME%20MORE%0AHOW%20FAR
+(actual image)
