@@ -1,14 +1,27 @@
 import frinkquery
 
+USAGE = """Send me a search for simpsons quotes and images:
+[#help] [#random] [#nocaption] query
+Examples:
+#random #nocaption
+(returns a random image without a caption on it)
+
+donuts
+(returns a random image with a caption. image has to do with donuts)
+"""
+
 def do_stuff(full_query):
     if full_query is None or full_query.strip() == "":
         return _build_error_response("You can't ask me to search for nothing!")
 
     # Build up options
-    options = {"random": False, "gif": False, "caption":True}
+    options = {"random": False, "gif": False, "caption":True, "help": False}
     pieces = full_query.split()
     cmdcount = 0
     for i in pieces:
+        if not i.startswith("#"):
+            break
+        cmdcount += 1
         if i == "#random":
             options["random"] = True
         elif i == "#gif":
@@ -17,13 +30,12 @@ def do_stuff(full_query):
             options["caption"] = False
         elif i == "#help":
             options["help"] = True
-        else:
-            if not i.startswith("#"):
-                break
-        cmdcount += 1
+
+    if options["help"]:
+        return _build_response(USAGE, None)
 
     query = full_query.split(None, cmdcount)[cmdcount:]
-    print "Debug:", options, query
+    print "DEBUG", "OPTIONS:", options, "QUERY:", query
     response = _get_full_response(query,
                     caption_on_image = options["caption"],
                     gif = options["gif"],
@@ -31,7 +43,10 @@ def do_stuff(full_query):
     return response
 
 def _build_error_response(message):
-    return {"error": True, "message": message}
+    return _build_response(message, None, True)
+
+def _build_response(message, imageurl, error=False):
+    return {"message": message, "imageurl": imageurl, "error":error}
 
 def _get_full_response(query, caption_on_image=False, gif=False, random=False):
     if random:
@@ -40,8 +55,6 @@ def _get_full_response(query, caption_on_image=False, gif=False, random=False):
         frame = frinkquery.query_one_frame(query)
     if frame is None:
         return _build_error_response("I couldn't find anything matching your query. Sorry.")
-
-    response = {"error": False}
 
     captions = frinkquery.get_captions_for_frame(frame)
 
@@ -52,6 +65,4 @@ def _get_full_response(query, caption_on_image=False, gif=False, random=False):
     else:
         pass #TODO Gif?
 
-    response["message"] = frinkquery.fix_captions(captions)
-    response["imageurl"] = imageurl
-    return response
+    return _build_response(frinkquery.fix_captions(captions), imageurl)
