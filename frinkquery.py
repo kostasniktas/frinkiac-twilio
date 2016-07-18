@@ -42,6 +42,8 @@ def query_one_frame(query):
     Returns a dict with the frame info
     """
     results = query_all_frames(query)
+    if len(results) < 1:
+        return None
     return random.choice(results)
 
 def get_captions_for_frame(frame):
@@ -70,5 +72,8 @@ def get_full_image_url(frame, caption=False):
     url = "{}/meme/{}/{}".format(FRINKIAC_URL, frame["episode"], frame["timestamp"])
     if caption:
         captions = get_captions_for_frame(frame)
-        return "{}?{}".format(url, urllib.urlencode({"lines": "\n".join(captions)}))
+        return "{}?{}".format(url, urllib.urlencode({"lines": fix_captions(captions)}))
     return url
+
+def fix_captions(captions):
+    return "\n".join(captions) #TODO
