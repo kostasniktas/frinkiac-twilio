@@ -16,7 +16,7 @@ def sms_inbound():
     from_number = request.values.get("From")
     message_body = request.values.get("Body")
 
-    logger.info("SMSReceived ID[{}] From[{}] Body[{}]".format(message_id, from_number, message_body))
+    logger.info(u"SMSReceived ID[{}] From[{}] Body[{}]".format(message_id, from_number, message_body))
     twiml = _query(message_body, tml=True, mid=message_id)
     return twiml
 
@@ -43,10 +43,10 @@ def search_result():
     from_number = "THEINTERWEBZ"
     message_body = request.values.get("Body")
     tml_check = request.values.get("DebugTML")
-    logger.info("WebSMSReceived ID[{}] From[{}] Body[{}]".format(message_id, from_number, message_body))
+    logger.info(u"WebSMSReceived ID[{}] From[{}] Body[{}]".format(message_id, from_number, message_body))
 
     if tml_check and tml_check == "TML":
-        search_response = "<pre>{}</pre>".format(_query(message_body, tml=True, mid=message_id))
+        search_response = u"<pre>{}</pre>".format(_query(message_body, tml=True, mid=message_id))
     else:
         search_response = _query(message_body)
 
@@ -67,7 +67,7 @@ def _query(querystr, tml=False, mid=None):
         response = _twiml(frame)
     else:
         response = _basic_html(frame)
-    logger.info("Query ID[{}] TML[{}] Reponse[{}]".format(mid, tml, response))
+    logger.info(u"Query ID[{}] TML[{}] Reponse[{}]".format(mid, tml, response))
     return response
 
 # Format a frame into a TwiML

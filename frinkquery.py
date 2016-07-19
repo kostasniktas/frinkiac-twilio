@@ -33,12 +33,12 @@ def query_all_frames(query):
 
     Returns list of dicts with frame info
     """
-    r = requests.get("{}/api/search?{}".format(FRINKIAC_URL,
-                        urllib.urlencode({"q": query})))
+    qurl = urllib.urlencode({"q": query.encode('utf8')})
+    r = requests.get(u"{}/api/search?{}".format(FRINKIAC_URL,qurl))
     if not r.ok:
-        logger.error("Query [{}] failed: {} {}".format(query, r.status_code, r.reason))
+        logger.error(u"Query [{}] failed: {} {}".format(query, r.status_code, r.reason))
     result = r.json()
-    logger.debug("Query [{}] found {} results.".format(query,len(result)))
+    logger.debug(u"Query [{}] found {} results.".format(query,len(result)))
     return [{"id": i["Id"], "episode": i["Episode"], "timestamp": i["Timestamp"]}
                 for i in result]
 
@@ -63,7 +63,7 @@ def get_captions_for_frame(frame):
             urllib.urlencode({"e": frame["episode"], "t": frame["timestamp"]}))
     r = requests.get(url)
     if not r.ok:
-        logger.error("CaptionQuery [{}] failed: {} {}".format(url, r.status_code, r.reason))
+        logger.error(u"CaptionQuery [{}] failed: {} {}".format(url, r.status_code, r.reason))
     result = r.json()
     captions = []
     #TODO Check for "Subtitles"
@@ -105,5 +105,5 @@ def _fix_single_caption(caption_line):
         count += len(word)
     if len(current_line) > 0:
         lines.append(" ".join(current_line))
-    print "{} => {}".format(caption_line,"\n".join(lines))
+    logger.debug(u"{} => {}".format(caption_line,"\n".join(lines)))
     return "\n".join(lines)

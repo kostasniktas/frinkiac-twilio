@@ -52,7 +52,7 @@ def do_stuff(full_query):
     else:
         query = full_query.split(None, cmdcount)[cmdcount]
 
-    logger.info("FullQuery[{}] => Options[{}] Query[{}]".format(full_query,options,query))
+    logger.info(u"FullQuery[{}] => Options[{}] Query[{}]".format(full_query,options,query))
 
     if options["help"]:
         return _build_response(USAGE, None, error=True)
