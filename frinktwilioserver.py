@@ -52,6 +52,13 @@ def search_result():
 
     return search_response
 
+@app.route("/random")
+def random():
+    return _query("#random")
+
+@app.route("/randomnocaption")
+def random_nocaption():
+    return _query("#random #nocaption")
 
 # Perform a query
 def _query(querystr, tml=False, mid=None):

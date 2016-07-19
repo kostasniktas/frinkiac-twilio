@@ -1,7 +1,12 @@
 import json
+import logging
 import random
 import requests
 import urllib
+
+logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 FRINKIAC_URL = "https://www.frinkiac.com"
 
@@ -13,10 +18,10 @@ def get_random_frame():
     """
     r = requests.get("{}/api/random".format(FRINKIAC_URL))
     if not r.ok:
-        raise Exception("Bad times during random check") #TODO
+        logger.error("Random Query failed: {} {}".format(r.status_code, r.reason))
     result = r.json()
     if "Frame" not in result:
-        raise Exception("No Frame in random?") #TODO
+        logger.error("Random Query result didn't have frame: {}".format(r.text))
     return {"id": result["Frame"]["Id"],
             "episode": result["Frame"]["Episode"],
             "timestamp": result["Frame"]["Timestamp"]}
@@ -30,9 +35,9 @@ def query_all_frames(query):
     r = requests.get("{}/api/search?{}".format(FRINKIAC_URL,
                         urllib.urlencode({"q": query})))
     if not r.ok:
-        raise Exception("Bad times during a query [{}]".format(query)) #TODO
+        logger.error("Query [{}] failed: {} {}".format(query, r.status_code, r.reason))
     result = r.json()
-    print "DEBUG FOUND {} RESULTS FOR {}".format(len(result), query)
+    logger.debug("Query [{}] found {} results.".format(query,len(result)))
     return [{"id": i["Id"], "episode": i["Episode"], "timestamp": i["Timestamp"]}
                 for i in result]
 
@@ -53,10 +58,11 @@ def get_captions_for_frame(frame):
 
     Returns a list of strings with all captions
     """
-    r = requests.get("{}/api/caption?{}".format(FRINKIAC_URL,
-                        urllib.urlencode({"e": frame["episode"], "t": frame["timestamp"]})))
+    url = "{}/api/caption?{}".format(FRINKIAC_URL,
+            urllib.urlencode({"e": frame["episode"], "t": frame["timestamp"]}))
+    r = requests.get(url)
     if not r.ok:
-        raise Exception("Bad times during finding captions for [{}]",format(frame)) #TODO
+        logger.error("CaptionQuery [{}] failed: {} {}".format(url, r.status_code, r.reason))
     result = r.json()
     captions = []
     #TODO Check for "Subtitles"

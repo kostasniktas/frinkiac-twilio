@@ -1,4 +1,9 @@
 import frinkquery
+import logging
+
+logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 USAGE = """Send me a search for simpsons quotes and images:
 [#help] [#random] [#nocaption] query
@@ -36,25 +41,30 @@ def do_stuff(full_query):
             options["help"] = True
         cmdcount += 1
 
-    if options["help"]:
-        return _build_response(USAGE, None)
-
     if cmdcount >= len(pieces):
         query = None
     else:
         query = full_query.split(None, cmdcount)[cmdcount]
-    print "DEBUG", "OPTIONS:", options, "QUERY:", query
+
+    logging.debug("FullQuery[{}] => Options[{}] Query[{}]".format(full_query,options,query))
+
+    if options["help"]:
+        return _build_response(USAGE, None)
+
     response = _get_full_response(query,
                     caption_on_image = options["caption"],
                     gif = options["gif"],
                     random = options["random"])
     return response
 
+
 def _build_error_response(message):
     return _build_response(message, None, True)
 
+
 def _build_response(message, imageurl, error=False):
     return {"message": message, "imageurl": imageurl, "error":error}
+
 
 def _get_full_response(query, caption_on_image=False, gif=False, random=False):
     if random:
