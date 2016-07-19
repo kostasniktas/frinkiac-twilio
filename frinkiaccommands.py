@@ -16,6 +16,8 @@ donuts
 #fullcaption donuts
 (returns an image with the entire caption. image has to do with donuts)
 """
+GIF_BEFORE = 0.3
+GIF_AFTER = 1.7
 
 def do_stuff(full_query):
     """
@@ -36,7 +38,7 @@ def do_stuff(full_query):
         if i == "#random":
             options["random"] = True
         elif i == "#gif":
-            options["gif"] = True
+            pass #DISABLED options["gif"] = True
         elif i == "#nocaption":
             options["caption"] = False
         elif i == "#fullcaption":
@@ -86,6 +88,6 @@ def _get_full_response(query, caption_on_image=False, all_captions=False, gif=Fa
     if not gif:
         imageurl = frinkquery.get_full_image_url(frame, caption=caption_on_image, all_captions=all_captions)
     else:
-        pass #TODO Gif?
+        imageurl = frinkquery.get_full_gif_url(frame, before=GIF_BEFORE, after=GIF_AFTER, caption=caption_on_image, all_captions=all_captions)
 
     return _build_response(frinkquery.fix_captions(captions, all_captions=all_captions), imageurl)

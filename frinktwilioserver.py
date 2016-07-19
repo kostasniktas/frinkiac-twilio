@@ -77,7 +77,7 @@ def _query(querystr, tml=False, mid=None):
         response = _twiml(frame)
     else:
         response = _basic_html(frame)
-    logger.info(u"Query ID[{}] TML[{}] Reponse[{}]".format(mid, tml, response))
+    logger.info(u"Query ID[{}] TML[{}] Reponse[{}]".format(mid, tml, response).encode('utf8'))
     return response
 
 # Format a frame into a TwiML

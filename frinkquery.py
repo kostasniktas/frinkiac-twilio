@@ -83,6 +83,28 @@ def get_full_image_url(frame, caption=False, all_captions=False):
         return "{}?{}".format(url, urllib.urlencode({"lines": fix_captions(captions, all_captions=all_captions).encode('utf8')}))
     return url
 
+def get_full_gif_url(frame, before=0, after=0, caption=False, all_captions=False):
+    """
+    Get the GIF URL for a frame
+    """
+    midpoint = int(frame["timestamp"])
+    if before + after > 10:
+        overflow = before + after - 10
+        if before > after:
+            before -= overflow
+        elif after > before:
+            after -= overflow
+        else:
+            before -= (overflow / 2)
+            after -= (overflow / 2)
+    start = int(midpoint - (before * 1000))
+    end = int(midpoint + (after * 1000))
+    url = "{}/gif/{}/{}/{}.gif".format(FRINKIAC_URL, frame["episode"], start, end)
+    if caption:
+        captions = get_captions_for_frame(frame)
+        return "{}?{}".format(url, urllib.urlencode({"lines": fix_captions(captions, all_captions=all_captions).encode('utf8')}))
+    return url
+
 def fix_captions(captions, all_captions=False):
     if all_captions:
         return "\n".join([_fix_single_caption(c) for c in captions]) #TODO
