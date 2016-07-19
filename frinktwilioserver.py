@@ -1,34 +1,69 @@
-import frinkiaccommands
-import flask
-import twilio.twiml
 import cgi
+from flask import Flask, request
+import frinkiaccommands
+import logging
+import twilio.twiml
 
-app = flask.Flask(__name__)
+app = Flask(__name__)
 
-@app.route("/", methods=["GET", "POST"])
+logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+@app.route("/smsinbound", methods=["GET", "POST"])
+def sms_inbound():
+    message_id = request.values.get("SmsMessageSid")
+    from_number = request.values.get("From")
+    message_body = request.values.get("Body")
+
+    logger.info("SMSReceived ID[{}] From[{}] Body[{}]".format(message_id, from_number, message_body))
+    twiml = _query(message_body, tml=True, mid=message_id)
+    return twiml
+
+@app.route("/")
 def hello():
-    print str(flask.request.values)
-    return str(query(flask.request.values.get("Body"), tml=True))
+    return "It's Frinkiac SMS!"
 
-@app.route("/random")
-def random():
-    return query("#random")
+@app.route("/searchdebug", methods=["GET"])
+def search():
+    return """<html>
+    <head><title>Search Frinkiac SMS</title></head>
+    <body>
+        <form action="/searchdebug" method="POST">
+            <input type="text" size=50 name="Body"/><br/>
+            <label><input type="checkbox" value="TML" name="DebugTML"/>TwilML</label><br/>
+            <input type="submit"/>
+        </form>
+    </body>
+</html>"""
 
-@app.route("/t/random")
-def trandom():
-    return "<pre>{}</pre>".format(cgi.escape(query("#random", tml=True)))
+@app.route("/searchdebug", methods=["POST"])
+def search_result():
+    message_id = "WEBMESSAGE"
+    from_number = "THEINTERWEBZ"
+    message_body = request.values.get("Body")
+    tml_check = request.values.get("DebugTML")
+    logger.info("WebSMSReceived ID[{}] From[{}] Body[{}]".format(message_id, from_number, message_body))
 
-@app.route("/t/query/<querystr>")
-def tquery(querystr):
-    return "<pre>{}</pre>".format(cgi.escape(query(querystr, tml=True)))
+    if tml_check and tml_check == "TML":
+        search_response = "<pre>{}</pre>".format(_query(message_body, tml=True, mid=message_id))
+    else:
+        search_response = _query(message_body)
 
-@app.route("/query/<querystr>")
-def query(querystr, tml = False):
-    response = frinkiaccommands.do_stuff(querystr)
+    return search_response
+
+
+# Perform a query
+def _query(querystr, tml=False, mid=None):
+    frame = frinkiaccommands.do_stuff(querystr)
     if tml:
-        return _twiml(response)
-    return _basic_html(response)
+        response = _twiml(frame)
+    else:
+        response = _basic_html(frame)
+    logger.info("Query ID[{}] TML[{}] Reponse[{}]".format(mid, tml, response))
+    return response
 
+# Format a frame into a TwiML
 def _twiml(frame):
     response = twilio.twiml.Response()
     if (frame["imageurl"] is not None):
@@ -38,6 +73,7 @@ def _twiml(frame):
         response.message(frame["message"])
     return str(response)
 
+# Format a frame with HTML
 def _basic_html(frame):
     if not frame["error"]:
             return """<html><body>
@@ -47,5 +83,7 @@ def _basic_html(frame):
     else:
         return """<h3>There was an error:</h3><br/><bold>{}</bold>""".format(frame["message"])
 
+
+# RUN THE SERVER!!!
 if __name__ == "__main__":
     app.run()
