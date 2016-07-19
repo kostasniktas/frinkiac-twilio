@@ -86,7 +86,7 @@ def _basic_html(frame):
             return """<html><body>
 <img src='{}'/><br/>
 <h3>{}</h3>
-</body></html>""".format(frame["imageurl"], frame["message"])
+</body></html>""".format(frame["imageurl"], frame["message"].replace("\n","</h3><h3>"))
     else:
         return """<h3>There was an error:</h3><br/><bold>{}</bold>""".format(frame["message"])
 

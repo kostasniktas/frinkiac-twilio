@@ -70,7 +70,7 @@ def get_captions_for_frame(frame):
         captions.append(i["Content"])
     return captions
 
-def get_full_image_url(frame, caption=False):
+def get_full_image_url(frame, caption=False, all_captions=False):
     """
     Get the image URL for a frame
 
@@ -79,9 +79,14 @@ def get_full_image_url(frame, caption=False):
     url = "{}/meme/{}/{}".format(FRINKIAC_URL, frame["episode"], frame["timestamp"])
     if caption:
         captions = get_captions_for_frame(frame)
-        return "{}?{}".format(url, urllib.urlencode({"lines": fix_captions(captions)}))
+        return "{}?{}".format(url, urllib.urlencode({"lines": fix_captions(captions, all_captions=all_captions)}))
     return url
 
 #TODO: Maybe just take the first line
-def fix_captions(captions):
-    return "\n".join(captions) #TODO
+def fix_captions(captions, all_captions=False):
+    if all_captions:
+        return "\n".join(captions) #TODO
+    else:
+        if len(captions) > 0:
+            return captions[0]
+    return ""

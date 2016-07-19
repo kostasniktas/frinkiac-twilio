@@ -25,7 +25,7 @@ def do_stuff(full_query):
         return _build_error_response("You can't ask me to search for nothing!")
 
     # Build up options
-    options = {"random": False, "gif": False, "caption":True, "help": False}
+    options = {"random": False, "gif": False, "caption":True, "fullcaption":False, "help": False}
     pieces = full_query.split()
     cmdcount = 0
     for i in pieces:
@@ -37,6 +37,8 @@ def do_stuff(full_query):
             options["gif"] = True
         elif i == "#nocaption":
             options["caption"] = False
+        elif i == "#fullcaption":
+            options["fullcaption"] = True
         elif i == "#help":
             options["help"] = True
         cmdcount += 1
@@ -66,7 +68,7 @@ def _build_response(message, imageurl, error=False):
     return {"message": message, "imageurl": imageurl, "error":error}
 
 
-def _get_full_response(query, caption_on_image=False, gif=False, random=False):
+def _get_full_response(query, caption_on_image=False, all_captions=False, gif=False, random=False):
     if random:
         frame = frinkquery.get_random_frame()
     else:
@@ -79,8 +81,8 @@ def _get_full_response(query, caption_on_image=False, gif=False, random=False):
     # Build the actual image url
     # TODO: (Ping the url async to make sure it's ready to go?)
     if not gif:
-        imageurl = frinkquery.get_full_image_url(frame, caption=caption_on_image)
+        imageurl = frinkquery.get_full_image_url(frame, caption=caption_on_image, all_captions=all_captions)
     else:
         pass #TODO Gif?
 
-    return _build_response(frinkquery.fix_captions(captions), imageurl)
+    return _build_response(frinkquery.fix_captions(captions, all_captions=all_captions), imageurl)
