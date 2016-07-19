@@ -1,9 +1,7 @@
 import frinkquery
 import logging
 
-logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger = logging.getLogger('frinkiacsms')
 
 USAGE = """Send me a search for simpsons quotes and images:
 [#help] [#random] [#nocaption] [#fullcaption] query

@@ -3,12 +3,22 @@ from flask import Flask, request
 import frinkiaccommands
 import logging
 import twilio.twiml
+import sys
 
 app = Flask(__name__)
 
-logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger = logging.getLogger('frinkiacsms')
+logger.setLevel(logging.DEBUG)
+fh = logging.handlers.RotatingFileHandler('frinkiacsms.log', maxBytes=100 * 1024**2)
+fh.setLevel(logging.DEBUG)
+ch = logging.StreamHandler()
+ch.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+fh.setFormatter(formatter)
+ch.setFormatter(formatter)
+logger.addHandler(fh)
+logger.addHandler(ch)
+
 
 @app.route("/smsinbound", methods=["GET", "POST"])
 def sms_inbound():
@@ -86,7 +96,7 @@ def _basic_html(frame):
             return """<html><body>
 <img src='{}'/><br/>
 <h3>{}</h3>
-</body></html>""".format(frame["imageurl"], frame["message"].replace("\n","</h3><h3>"))
+</body></html>""".format(frame["imageurl"], frame["message"].replace("\n","</h3><h3>").encode('utf8'))
     else:
         return """<h3>There was an error or info:</h3><br/><bold><pre>{}</pre></bold>""".format(frame["message"])
 

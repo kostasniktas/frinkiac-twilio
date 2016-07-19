@@ -1,12 +1,12 @@
 import json
 import logging
+import logging.handlers
 import random
 import requests
 import urllib
 
-logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger = logging.getLogger('frinkiacsms')
+
 
 FRINKIAC_URL = "https://www.frinkiac.com"
 CAPTION_MAX_LINE = 25
@@ -80,10 +80,9 @@ def get_full_image_url(frame, caption=False, all_captions=False):
     url = "{}/meme/{}/{}".format(FRINKIAC_URL, frame["episode"], frame["timestamp"])
     if caption:
         captions = get_captions_for_frame(frame)
-        return "{}?{}".format(url, urllib.urlencode({"lines": fix_captions(captions, all_captions=all_captions)}))
+        return "{}?{}".format(url, urllib.urlencode({"lines": fix_captions(captions, all_captions=all_captions).encode('utf8')}))
     return url
 
-#TODO: Maybe just take the first line
 def fix_captions(captions, all_captions=False):
     if all_captions:
         return "\n".join([_fix_single_caption(c) for c in captions]) #TODO
