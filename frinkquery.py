@@ -9,6 +9,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 FRINKIAC_URL = "https://www.frinkiac.com"
+CAPTION_MAX_LINE = 25
 
 def get_random_frame():
     """
@@ -85,8 +86,24 @@ def get_full_image_url(frame, caption=False, all_captions=False):
 #TODO: Maybe just take the first line
 def fix_captions(captions, all_captions=False):
     if all_captions:
-        return "\n".join(captions) #TODO
+        return "\n".join([_fix_single_caption(c) for c in captions]) #TODO
     else:
         if len(captions) > 0:
-            return captions[0]
+            return _fix_single_caption(captions[0])
     return ""
+
+def _fix_single_caption(caption_line):
+    lines = []
+    current_line = []
+    count = 0
+    for word in caption_line.split():
+        if count + len(current_line) - 1 >= CAPTION_MAX_LINE:
+            count = 0
+            lines.append(" ".join(current_line))
+            current_line = []
+        current_line.append(word)
+        count += len(word)
+    if len(current_line) > 0:
+        lines.append(" ".join(current_line))
+    print "{} => {}".format(caption_line,"\n".join(lines))
+    return "\n".join(lines)

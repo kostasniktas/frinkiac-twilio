@@ -6,13 +6,17 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 USAGE = """Send me a search for simpsons quotes and images:
-[#help] [#random] [#nocaption] query
+[#help] [#random] [#nocaption] [#fullcaption] query
 Examples:
+
 #random #nocaption
 (returns a random image without a caption on it)
 
 donuts
-(returns a random image with a caption. image has to do with donuts)
+(returns an image with a caption. image has to do with donuts)
+
+#fullcaption donuts
+(returns an image with the entire caption. image has to do with donuts)
 """
 
 def do_stuff(full_query):
@@ -48,13 +52,14 @@ def do_stuff(full_query):
     else:
         query = full_query.split(None, cmdcount)[cmdcount]
 
-    logging.debug("FullQuery[{}] => Options[{}] Query[{}]".format(full_query,options,query))
+    logger.info("FullQuery[{}] => Options[{}] Query[{}]".format(full_query,options,query))
 
     if options["help"]:
-        return _build_response(USAGE, None)
+        return _build_response(USAGE, None, error=True)
 
     response = _get_full_response(query,
                     caption_on_image = options["caption"],
+                    all_captions = options["fullcaption"],
                     gif = options["gif"],
                     random = options["random"])
     return response

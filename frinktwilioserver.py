@@ -31,7 +31,7 @@ def search():
     <body>
         <form action="/searchdebug" method="POST">
             <input type="text" size=50 name="Body"/><br/>
-            <label><input type="checkbox" value="TML" name="DebugTML"/>TwilML</label><br/>
+            <label><input type="checkbox" value="TML" name="DebugTML"/>TwiML</label><br/>
             <input type="submit"/>
         </form>
     </body>
@@ -88,7 +88,7 @@ def _basic_html(frame):
 <h3>{}</h3>
 </body></html>""".format(frame["imageurl"], frame["message"].replace("\n","</h3><h3>"))
     else:
-        return """<h3>There was an error:</h3><br/><bold>{}</bold>""".format(frame["message"])
+        return """<h3>There was an error or info:</h3><br/><bold><pre>{}</pre></bold>""".format(frame["message"])
 
 
 # RUN THE SERVER!!!
