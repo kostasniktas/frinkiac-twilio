@@ -1,6 +1,6 @@
 import cgi
 from flask import Flask, request
-import frinkiaccommands
+import frinkcommands
 import logging
 import os
 import twilio.twiml
@@ -73,7 +73,7 @@ def random_nocaption():
 
 # Perform a query
 def _query(querystr, tml=False, mid=None):
-    frame = frinkiaccommands.do_stuff(querystr)
+    frame = frinkcommands.do_stuff(querystr)
     if tml:
         response = _twiml(frame)
     else:
