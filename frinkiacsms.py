@@ -3,8 +3,9 @@ from flask import Flask, request
 import frinkcommands
 import logging
 import os
-import twilio.twiml
+import simpsonsvoice
 import sys
+import twilio.twiml
 
 app = Flask(__name__)
 
@@ -30,6 +31,12 @@ def sms_inbound():
     logger.info(u"SMSReceived ID[{}] From[{}] Body[{}]".format(message_id, from_number, message_body))
     twiml = _query(message_body, tml=True, mid=message_id)
     return twiml
+
+@app.route("/voiceinbound", methods=["GET", "POST"])
+def voice_inbound():
+    response = twilio.twiml.Response()
+    response.say("The fingers you have used to dial, are too fat. To obtain a special dialing wand please mash the keypad now.", voice='alice')
+    return str(response)
 
 @app.route("/")
 def hello():
