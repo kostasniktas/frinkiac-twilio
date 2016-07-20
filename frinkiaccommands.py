@@ -4,7 +4,7 @@ import logging
 logger = logging.getLogger('frinkiacsms')
 
 USAGE = """Send me a search for simpsons quotes and images:
-[#help] [#random] [#nocaption] [#fullcaption] query
+[#help] [#random] [#gif] [#nocaption] [#fullcaption] query
 Examples:
 
 #random #nocaption
@@ -38,7 +38,7 @@ def do_stuff(full_query):
         if i == "#random":
             options["random"] = True
         elif i == "#gif":
-            pass #DISABLED options["gif"] = True
+            options["gif"] = True
         elif i == "#nocaption":
             options["caption"] = False
         elif i == "#fullcaption":
