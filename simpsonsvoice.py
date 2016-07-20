@@ -17,6 +17,8 @@ SIMPSONS_CLIPS = [
     # "http://www.richmolnar.com/Sounds/Dr.%20Nick%20-%20Bye%20everybody.wav"),
 ]
 
+SIMPSONS_GOODBYE = "http://www.richmolnar.com/Sounds/Dr.%20Nick%20-%20Bye%20everybody.wav"
+
 SIMPSONS_SONGS = [
     "http://www.richmolnar.com/Sounds/Homer%20-%20Flintstones.wav",
 
