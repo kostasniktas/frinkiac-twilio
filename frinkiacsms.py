@@ -37,7 +37,7 @@ def voice_inbound():
     response = twilio.twiml.Response()
     response.pause(length=2)
     response.say("I'm sorry.  The fingers you have used to dial, are too fat. To obtain a special dialing wand please mash the keypad now.", voice='alice')
-    response.gather(timeout=10, numDigits=5, method="GET", action=request.url_root+"voiceinboud_choice")
+    response.gather(timeout=10, numDigits=5, method="GET", action=request.url_root+"voiceinbound_choice")
     response.play(simpsonsvoice.SIMPSONS_GOODBYE)
     response.hangup()
     return str(response)
@@ -46,6 +46,7 @@ def voice_inbound():
 def voice_inbound_choice():
     response = twilio.twiml.Response()
     response.sms("We got some digits: {}".format(request.values.get("Digits")))
+    response.play(simpsonsvoice.SIMPSONS_CLIPS[4])
     return str(response)
 
 
