@@ -3,6 +3,7 @@ from flask import Flask, request
 import frinkcommands
 import logging
 import os
+import random
 import re
 import simpsonsvoice
 import sys
@@ -86,11 +87,11 @@ def search_result():
     return search_response
 
 @app.route("/random")
-def random():
+def random_query():
     return _query("#random")
 
 @app.route("/randomnocaption")
-def random_nocaption():
+def random_query_nocaption():
     return _query("#random #nocaption")
 
 # Perform a query
@@ -106,6 +107,9 @@ def _query(querystr, tml=False, mid=None):
 # Format a frame into a TwiML
 def _twiml(frame):
     response = twilio.twiml.Response()
+    if (frame["callme"]):
+        response.play(random.choice(simpsonsvoice.SIMPSONS_CLIPS))
+        return str(response)
     if (frame["imageurl"] is not None):
         with response.message(frame["message"]) as m:
             m.media(frame["imageurl"])
@@ -115,6 +119,9 @@ def _twiml(frame):
 
 # Format a frame with HTML
 def _basic_html(frame):
+    if (frame["callme"]):
+        sound = random.choice(simpsonsvoice.SIMPSONS_CLIPS)
+        return """<html><body><a href="{}">sound</a></body></html""".format(sound)
     if not frame["error"]:
             return """<html><body>
 <img src='{}'/><br/>

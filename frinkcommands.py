@@ -29,7 +29,8 @@ def do_stuff(full_query):
         return _build_error_response("You can't ask me to search for nothing!")
 
     # Build up options
-    options = {"random": False, "gif": False, "caption":True, "fullcaption":False, "help": False}
+    options = {"random": False, "gif": False, "caption":True,
+               "fullcaption":False, "help": False, "callme": False}
     pieces = full_query.split()
     cmdcount = 0
     for i in pieces:
@@ -43,6 +44,8 @@ def do_stuff(full_query):
             options["caption"] = False
         elif i == "#fullcaption":
             options["fullcaption"] = True
+        elif i == "#callme":
+            options["callme"] = True
         elif i == "#help":
             options["help"] = True
         cmdcount += 1
@@ -57,6 +60,9 @@ def do_stuff(full_query):
     if options["help"]:
         return _build_response(USAGE, None, error=True)
 
+    if options["callme"]:
+        return _build_response("Call", None, callme=True)
+
     response = _get_full_response(query,
                     caption_on_image = options["caption"],
                     all_captions = options["fullcaption"],
@@ -69,8 +75,8 @@ def _build_error_response(message):
     return _build_response(message, None, True)
 
 
-def _build_response(message, imageurl, error=False):
-    return {"message": message, "imageurl": imageurl, "error":error}
+def _build_response(message, imageurl, error=False, callme=False):
+    return {"message": message, "imageurl": imageurl, "error":error, "callme":callme}
 
 
 def _get_full_response(query, caption_on_image=False, all_captions=False, gif=False, random=False):

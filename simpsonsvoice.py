@@ -13,9 +13,12 @@ SIMPSONS_CLIPS = [
     "http://www.richmolnar.com/Sounds/Ralph%20-%20Tar%20fumes.wav",
     "http://www.richmolnar.com/Sounds/Homer%20-%20Words%20of%20advice.wav",
     "http://www.richmolnar.com/Sounds/Ralph%20-%20Glue.wav",
-    "http://www.richmolnar.com/Sounds/Homer%20-%20Flintstones.wav",
     #("http://www.richmolnar.com/Sounds/Dr.%20Nick%20-%20Hi%20everybody%20(1).wav",
     # "http://www.richmolnar.com/Sounds/Dr.%20Nick%20-%20Bye%20everybody.wav"),
+]
+
+SIMPSONS_CLIPS_LONG = [
+    "http://www.richmolnar.com/Sounds/Homer%20-%20Flintstones.wav",
 ]
 
 SIMPSONS_GOODBYE = "http://www.richmolnar.com/Sounds/Dr.%20Nick%20-%20Bye%20everybody.wav"
