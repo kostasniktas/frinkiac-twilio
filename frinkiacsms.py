@@ -3,6 +3,7 @@ from flask import Flask, request
 import frinkcommands
 import logging
 import os
+import re
 import simpsonsvoice
 import sys
 import twilio.twiml
@@ -36,8 +37,9 @@ def sms_inbound():
 def voice_inbound():
     response = twilio.twiml.Response()
     response.pause(length=2)
-    response.say("I'm sorry.  The fingers you have used to dial, are too fat. To obtain a special dialing wand please mash the keypad now.", voice='alice')
+    response.say("I'm sorry.  The fingers you have used to dial, are too fat. To obtain a special dialing wand please mash the keypad now.", voice="alice")
     response.gather(timeout=10, numDigits=5, method="GET", action=request.url_root+"voiceinbound_choice")
+    response.say("No keys were pressed.", voice="alice", language="en-gb")
     response.play(simpsonsvoice.SIMPSONS_GOODBYE)
     response.hangup()
     return str(response)
@@ -45,10 +47,11 @@ def voice_inbound():
 @app.route("/voiceinbound_choice", methods=["GET"])
 def voice_inbound_choice():
     response = twilio.twiml.Response()
-    response.sms("We got some digits: {}".format(request.values.get("Digits")))
-    response.play(simpsonsvoice.SIMPSONS_CLIPS[4])
+    digits = request.values.get("Digits")
+    digits = int(re.sub("[^0-9]", "", digits))
+    choice = digits % len(simpsonsvoice.SIMPSONS_CLIPS)
+    response.play(simpsonsvoice.SIMPSONS_CLIPS[choice])
     return str(response)
-
 
 @app.route("/")
 def hello():
