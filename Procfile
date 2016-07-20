@@ -1,1 +1,1 @@
-web: gunicorn frinkiac-sms.wsgi --log-file -
+web: python frinktwilioserver.py
