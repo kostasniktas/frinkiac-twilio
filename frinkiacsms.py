@@ -8,6 +8,7 @@ import re
 import simpsonsvoice
 import sys
 import twilio.twiml
+import twilio.rest
 
 app = Flask(__name__)
 
@@ -52,6 +53,16 @@ def voice_inbound_choice():
     digits = int(re.sub("[^0-9]", "", digits))
     choice = digits % len(simpsonsvoice.SIMPSONS_CLIPS)
     response.play(simpsonsvoice.SIMPSONS_CLIPS[choice])
+    return str(response)
+
+SID = os.environ.get("ACCOUNT_SID")
+TOK = os.environ.get("ACCOUNT_TOK")
+
+@app.route("/voiceoutbound_random", methods=["GET", "POST"])
+def voice_outbound_random():
+    response = twilio.twiml.Response()
+    response.pause(length=1)
+    response.play(random.choice(simpsonsvoice.SIMPSONS_CLIPS))
     return str(response)
 
 @app.route("/")
@@ -108,8 +119,12 @@ def _query(querystr, tml=False, mid=None):
 def _twiml(frame):
     response = twilio.twiml.Response()
     if (frame["callme"]):
-        response.play(random.choice(simpsonsvoice.SIMPSONS_CLIPS))
-        return str(response)
+        if SID is None or TOK is None:
+            return str(twilio.twiml.Response())
+        client = twilio.rest.TwilioRestClient(SID, TOK)
+        client.calls.create(to=request.values.get("From"), from_=request.values.get("To"),
+                            url=request.url_root+"voiceoutbound_random")
+        return str(twilio.twiml.Response())
     if (frame["imageurl"] is not None):
         with response.message(frame["message"]) as m:
             m.media(frame["imageurl"])
