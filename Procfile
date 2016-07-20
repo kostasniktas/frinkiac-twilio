@@ -1,1 +1,1 @@
-web: python frinktwilioserver.py
+web: gunicorn wsgi
