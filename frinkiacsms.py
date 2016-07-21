@@ -39,8 +39,9 @@ def sms_inbound():
 def voice_inbound():
     response = twilio.twiml.Response()
     response.pause(length=2)
-    response.say("I'm sorry.  The fingers you have used to dial, are too fat. To obtain a special dialing wand please mash the keypad now.", voice="alice")
-    response.gather(timeout=7, numDigits=5, method="GET", action=request.url_root+"voiceinbound_choice")
+    response.say("I'm sorry.  The fingers you have used to dial, are too fat.", voice="alice")
+    g = response.gather(timeout=7, numDigits=5, method="GET", action=request.url_root+"voiceinbound_choice")
+    g.say("To obtain a special dialing wand please mash the keypad now.", voice="alice")
     response.say("No keys were pressed.", voice="alice", language="en-gb")
     response.play(simpsonsvoice.SIMPSONS_GOODBYE)
     response.hangup()
