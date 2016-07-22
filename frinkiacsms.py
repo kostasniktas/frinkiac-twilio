@@ -24,6 +24,9 @@ ch.setFormatter(formatter)
 logger.addHandler(fh)
 logger.addHandler(ch)
 
+# Call if necessary
+SID = os.environ.get("ACCOUNT_SID")
+TOK = os.environ.get("ACCOUNT_TOK")
 
 @app.route("/smsinbound", methods=["GET", "POST"])
 def sms_inbound():
@@ -54,16 +57,17 @@ def voice_inbound_choice():
     digits = int(re.sub("[^0-9]", "", digits))
     choice = digits % len(simpsonsvoice.SIMPSONS_CLIPS)
     response.play(simpsonsvoice.SIMPSONS_CLIPS[choice])
+    response.pause(length=1)
+    response.hangup()
     return str(response)
-
-SID = os.environ.get("ACCOUNT_SID")
-TOK = os.environ.get("ACCOUNT_TOK")
 
 @app.route("/voiceoutbound_random", methods=["GET", "POST"])
 def voice_outbound_random():
     response = twilio.twiml.Response()
     response.pause(length=1)
     response.play(random.choice(simpsonsvoice.SIMPSONS_CLIPS))
+    response.pause(length=1)
+    response.hangup()
     return str(response)
 
 @app.route("/")

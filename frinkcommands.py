@@ -90,7 +90,6 @@ def _get_full_response(query, caption_on_image=False, all_captions=False, gif=Fa
     captions = frinkquery.get_captions_for_frame(frame)
 
     # Build the actual image url
-    # TODO: (Ping the url async to make sure it's ready to go?)
     if not gif:
         imageurl = frinkquery.get_full_image_url(frame, caption=caption_on_image, all_captions=all_captions)
     else:
