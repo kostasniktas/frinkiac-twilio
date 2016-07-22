@@ -2,6 +2,7 @@ import difflib
 import json
 import logging
 import logging.handlers
+import multiprocessing
 import random
 import requests
 import urllib
@@ -29,6 +30,10 @@ def get_random_frame():
             "episode": result["Frame"]["Episode"],
             "timestamp": result["Frame"]["Timestamp"]}
 
+def _add_caption_raw_to_frame(frame):
+    frame["caption_raw"] = get_captions_for_frame(frame)
+    return frame
+
 def query_all_frames(query):
     """
     Query Frinkiac for all frames matching the query.
@@ -43,8 +48,10 @@ def query_all_frames(query):
     logger.debug(u"Query [{}] found {} results.".format(query,len(result)))
     all_results = [{"id": i["Id"], "episode": i["Episode"], "timestamp": i["Timestamp"]}
                         for i in result]
-    for i in all_results:
-        i["caption_raw"] = get_captions_for_frame(i)
+
+    pool = multiprocessing.Pool(processes=4)
+    all_results = pool.map(_add_caption_raw_to_frame, all_results)
+
     return all_results
 
 def _string_score(query, caption):
