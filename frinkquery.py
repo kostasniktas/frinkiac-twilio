@@ -1,3 +1,4 @@
+import difflib
 import json
 import logging
 import logging.handlers
@@ -10,6 +11,7 @@ logger = logging.getLogger('frinkiacsms')
 
 FRINKIAC_URL = "https://www.frinkiac.com"
 CAPTION_MAX_LINE = 25
+MOST_CHOICES = 5
 
 def get_random_frame():
     """
@@ -42,7 +44,7 @@ def query_all_frames(query):
     return [{"id": i["Id"], "episode": i["Episode"], "timestamp": i["Timestamp"]}
                 for i in result]
 
-def query_one_frame(query):
+def query_one_frame(query, better_choosing=True):
     """
     Query Frinkiac for one random frame that matches the query.
 
@@ -51,7 +53,28 @@ def query_one_frame(query):
     results = query_all_frames(query)
     if len(results) < 1:
         return None
-    return random.choice(results)
+
+    if not better_choosing:
+        return random.choice(results)
+
+    queryl = query.lower()
+    for result in results:
+        caption = get_captions_for_frame(result)
+        result["caption"] = " ".join(caption).lower()
+        result["score"] = difflib.SequenceMatcher(None, queryl, result["caption"]).ratio()
+    sliced_sorted = sorted(results, key=lambda s: s["score"], reverse=True)[:MOST_CHOICES]
+
+    # Find max weight
+    total = sum([result["score"] for result in sliced_sorted])
+
+    # Pick a random one based on the weights
+    choice = random.uniform(0, total)
+    so_far = 0
+    for result in sliced_sorted:
+        if so_far + result["score"] >= choice:
+            return result
+        so_far += result["score"]
+    return None # uh oh
 
 def get_captions_for_frame(frame):
     """
