@@ -87,7 +87,7 @@ def _get_full_response(query, caption_on_image=False, all_captions=False, gif=Fa
     if frame is None:
         return _build_error_response("I couldn't find anything matching your query. Sorry.")
 
-    captions = frinkquery.get_captions_for_frame(frame)
+    captions = frame["caption_raw"]
 
     # Build the actual image url
     if not gif:
@@ -95,4 +95,4 @@ def _get_full_response(query, caption_on_image=False, all_captions=False, gif=Fa
     else:
         imageurl = frinkquery.get_full_gif_url(frame, before=GIF_BEFORE, after=GIF_AFTER, caption=caption_on_image, all_captions=all_captions)
 
-    return _build_response(frinkquery.fix_captions(captions, all_captions=all_captions), imageurl)
+    return _build_response(frinkquery.fix_captions(captions, caption_first=frame["caption_first"], all_captions=all_captions), imageurl)

@@ -41,8 +41,14 @@ def query_all_frames(query):
         logger.error(u"Query [{}] failed: {} {}".format(query, r.status_code, r.reason))
     result = r.json()
     logger.debug(u"Query [{}] found {} results.".format(query,len(result)))
-    return [{"id": i["Id"], "episode": i["Episode"], "timestamp": i["Timestamp"]}
-                for i in result]
+    all_results = [{"id": i["Id"], "episode": i["Episode"], "timestamp": i["Timestamp"]}
+                        for i in result]
+    for i in all_results:
+        i["caption_raw"] = get_captions_for_frame(i)
+    return all_results
+
+def _string_score(query, caption):
+    return difflib.SequenceMatcher(None, query, caption).ratio()
 
 def query_one_frame(query, better_choosing=True):
     """
@@ -59,9 +65,8 @@ def query_one_frame(query, better_choosing=True):
 
     queryl = query.lower()
     for result in results:
-        caption = get_captions_for_frame(result)
-        result["caption"] = " ".join(caption).lower()
-        result["score"] = difflib.SequenceMatcher(None, queryl, result["caption"]).ratio()
+        result["caption_to_score"] = " ".join(result["caption_raw"]).lower()
+        result["score"] = _string_score(queryl, result["caption_to_score"])
     sliced_sorted = sorted(results, key=lambda s: s["score"], reverse=True)[:MOST_CHOICES]
 
     # Find max weight
@@ -72,6 +77,10 @@ def query_one_frame(query, better_choosing=True):
     so_far = 0
     for result in sliced_sorted:
         if so_far + result["score"] >= choice:
+            ranked_captions = []
+            for c in result["caption_raw"]:
+                ranked_captions.append({"score":_string_score(queryl,c), "caption": c})
+            result["caption_first"] = sorted(ranked_captions, key=lambda s: s["score"], reverse=True)[0]["caption"]
             return result
         so_far += result["score"]
     return None # uh oh
@@ -102,8 +111,9 @@ def get_full_image_url(frame, caption=False, all_captions=False):
     """
     url = "{}/meme/{}/{}".format(FRINKIAC_URL, frame["episode"], frame["timestamp"])
     if caption:
-        captions = get_captions_for_frame(frame)
-        return "{}?{}".format(url, urllib.urlencode({"lines": fix_captions(captions, all_captions=all_captions).encode('utf8')}))
+        captions = frame["caption_raw"]
+        return "{}?{}".format(url, urllib.urlencode({"lines": fix_captions(captions, caption_first=frame["caption_first"],
+                                all_captions=all_captions).encode('utf8')}))
     return url
 
 def get_full_gif_url(frame, before=0, after=0, caption=False, all_captions=False):
@@ -124,13 +134,16 @@ def get_full_gif_url(frame, before=0, after=0, caption=False, all_captions=False
     end = int(midpoint + (after * 1000))
     url = "{}/gif/{}/{}/{}.gif".format(FRINKIAC_URL, frame["episode"], start, end)
     if caption:
-        captions = get_captions_for_frame(frame)
-        return "{}?{}".format(url, urllib.urlencode({"lines": fix_captions(captions, all_captions=all_captions).encode('utf8')}))
+        captions = frame["caption_raw"]
+        return "{}?{}".format(url, urllib.urlencode({"lines": fix_captions(captions, caption_first=frame["caption_first"],
+                                    all_captions=all_captions).encode('utf8')}))
     return url
 
-def fix_captions(captions, all_captions=False):
+def fix_captions(captions, caption_first=None, all_captions=False):
     if all_captions:
         return "\n".join([_fix_single_caption(c) for c in captions]) #TODO
+    elif caption_first is not None:
+        return _fix_single_caption(caption_first)
     else:
         if len(captions) > 0:
             return _fix_single_caption(captions[0])
