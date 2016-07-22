@@ -86,7 +86,7 @@ def query_one_frame(query, better_choosing=True):
         if so_far + result["score"] >= choice:
             ranked_captions = []
             for c in result["caption_raw"]:
-                ranked_captions.append({"score":_string_score(queryl,c), "caption": c})
+                ranked_captions.append({"score":_string_score(queryl,c.lower()), "caption": c})
             result["caption_first"] = sorted(ranked_captions, key=lambda s: s["score"], reverse=True)[0]["caption"]
             return result
         so_far += result["score"]
