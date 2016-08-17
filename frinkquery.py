@@ -28,7 +28,8 @@ def get_random_frame():
         logger.error("Random Query result didn't have frame: {}".format(r.text))
     return {"id": result["Frame"]["Id"],
             "episode": result["Frame"]["Episode"],
-            "timestamp": result["Frame"]["Timestamp"]}
+            "timestamp": result["Frame"]["Timestamp"],
+            "caption_raw": get_captions_for_frame(result)}
 
 def _add_caption_raw_to_frame(frame):
     frame["caption_raw"] = get_captions_for_frame(frame)
