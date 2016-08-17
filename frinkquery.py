@@ -26,10 +26,11 @@ def get_random_frame():
     result = r.json()
     if "Frame" not in result:
         logger.error("Random Query result didn't have frame: {}".format(r.text))
-    return {"id": result["Frame"]["Id"],
+    frame = _add_caption_raw_to_frame({"id": result["Frame"]["Id"],
             "episode": result["Frame"]["Episode"],
-            "timestamp": result["Frame"]["Timestamp"],
-            "caption_raw": get_captions_for_frame(result)}
+            "timestamp": result["Frame"]["Timestamp"]})
+    frame["caption_first"] = frame["caption_raw"][0]
+    return frame
 
 def _add_caption_raw_to_frame(frame):
     frame["caption_raw"] = get_captions_for_frame(frame)
