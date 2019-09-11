@@ -29,6 +29,13 @@ SID = os.environ.get("ACCOUNT_SID")
 TOK = os.environ.get("ACCOUNT_TOK")
 
 
+@app.route("/sounds/<soundfile>", methods=["GET"])
+def sounds_byebye(soundfile):
+    if soundfile in simpsonsvoice.SIMPSONS_ALL_SOUNDS:
+        return send_file('sounds/{}'.format(soundfile))
+    return 'Could you explain the thing you were saying?', 404
+
+
 @app.route("/smsinbound", methods=["GET", "POST"])
 def sms_inbound():
     message_id = request.values.get("SmsMessageSid")
@@ -48,7 +55,7 @@ def voice_inbound():
     g = response.gather(timeout=7, numDigits=5, method="GET", action=request.url_root+"voiceinbound_choice")
     g.say("To obtain a special dialing wand please mash the keypad now.", voice="alice")
     response.say("No keys were pressed.", voice="alice", language="en-gb")
-    response.play(simpsonsvoice.SIMPSONS_GOODBYE)
+    response.play(request.host_url + 'sounds/' + simpsonsvoice.SIMPSONS_GOODBYE)
     response.hangup()
     return str(response)
 
@@ -59,7 +66,7 @@ def voice_inbound_choice():
     digits = request.values.get("Digits")
     digits = int(re.sub("[^0-9]", "", digits))
     choice = digits % len(simpsonsvoice.SIMPSONS_CLIPS)
-    response.play(simpsonsvoice.SIMPSONS_CLIPS[choice])
+    response.play(request.host_url + 'sounds/' + simpsonsvoice.SIMPSONS_CLIPS[choice])
     response.pause(length=1)
     response.hangup()
     return str(response)
@@ -69,7 +76,7 @@ def voice_inbound_choice():
 def voice_outbound_random():
     response = twilio.twiml.Response()
     response.pause(length=1)
-    response.play(random.choice(simpsonsvoice.SIMPSONS_CLIPS))
+    response.play(request.host_url + 'sounds/' + random.choice(simpsonsvoice.SIMPSONS_CLIPS))
     response.pause(length=1)
     response.hangup()
     return str(response)

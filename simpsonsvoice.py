@@ -1,22 +1,27 @@
 
 SIMPSONS_CLIPS = [
-    "http://www.richmolnar.com/Sounds/Barney%20-%20Heart%20stopped.wav",
-    "http://www.richmolnar.com/Sounds/Bart%20-%20Cool,%20I%20broke%20his%20brain.wav",
-    "http://www.richmolnar.com/Sounds/Burns%20-%20Release%20the%20hounds.wav",
-    "http://www.richmolnar.com/Sounds/Homer%20-%2032%20d'ohs.wav",
-    "http://www.richmolnar.com/Sounds/Homer%20-%20Bart,%20kill%20that%20cat.wav",
-    "http://www.richmolnar.com/Sounds/Homer%20-%20Didn't%20that%20hurt.wav",
-    "http://www.richmolnar.com/Sounds/Homer%20-%20Everyone%20is%20stupid.wav",
-    "http://www.richmolnar.com/Sounds/Homer%20-%20Going%20to%20stalk.wav",
-    "http://www.richmolnar.com/Sounds/Homer%20-%20Horse%20laugh.wav",
-    "http://www.richmolnar.com/Sounds/Homer%20-%20Mmmm,%20forbidden%20donut.wav",
-    "http://www.richmolnar.com/Sounds/Ralph%20-%20Tar%20fumes.wav",
-    "http://www.richmolnar.com/Sounds/Homer%20-%20Words%20of%20advice.wav",
-    "http://www.richmolnar.com/Sounds/Ralph%20-%20Glue.wav",
+    "heart.wav",
+    "brkbrain.mp3",
+    "hounds.mp3",
+    "32dohs.mp3",
+    #"http://www.richmolnar.com/Sounds/Homer%20-%20Bart,%20kill%20that%20cat.wav",
+    "youhurt.mp3",
+    #"http://www.richmolnar.com/Sounds/Homer%20-%20Everyone%20is%20stupid.wav",
+    "stalk.mp3",
+    "losebrain.mp3",
+    "forbidd.mp3",
+    "fumes.mp3",
+    #"http://www.richmolnar.com/Sounds/Homer%20-%20Words%20of%20advice.wav",
+    "glue.mp3",
 ]
 
 SIMPSONS_CLIPS_LONG = [
-    "http://www.richmolnar.com/Sounds/Homer%20-%20Flintstones.wav",
+    "flintstone.mp3",
 ]
 
-SIMPSONS_GOODBYE = "http://www.richmolnar.com/Sounds/Dr.%20Nick%20-%20Bye%20everybody.wav"
+SIMPSONS_GOODBYE = "byebye.mp3"
+
+SIMPSONS_ALL_SOUNDS = []
+SIMPSONS_ALL_SOUNDS.extend(SIMPSONS_CLIPS)
+SIMPSONS_ALL_SOUNDS.extend(SIMPSONS_CLIPS_LONG)
+SIMPSONS_ALL_SOUNDS.append(SIMPSONS_GOODBYE)
