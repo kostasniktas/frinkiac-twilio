@@ -1,5 +1,5 @@
 import cgi
-from flask import Flask, request
+from flask import Flask, request, send_file
 import frinkcommands
 import logging
 import os
@@ -28,6 +28,7 @@ logger.addHandler(ch)
 SID = os.environ.get("ACCOUNT_SID")
 TOK = os.environ.get("ACCOUNT_TOK")
 
+
 @app.route("/smsinbound", methods=["GET", "POST"])
 def sms_inbound():
     message_id = request.values.get("SmsMessageSid")
@@ -37,6 +38,7 @@ def sms_inbound():
     logger.info(u"SMSReceived ID[{}] From[{}] Body[{}]".format(message_id, from_number, message_body))
     twiml = _query(message_body, tml=True, mid=message_id)
     return twiml
+
 
 @app.route("/voiceinbound", methods=["GET", "POST"])
 def voice_inbound():
@@ -50,6 +52,7 @@ def voice_inbound():
     response.hangup()
     return str(response)
 
+
 @app.route("/voiceinbound_choice", methods=["GET"])
 def voice_inbound_choice():
     response = twilio.twiml.Response()
@@ -61,6 +64,7 @@ def voice_inbound_choice():
     response.hangup()
     return str(response)
 
+
 @app.route("/voiceoutbound_random", methods=["GET", "POST"])
 def voice_outbound_random():
     response = twilio.twiml.Response()
@@ -70,9 +74,11 @@ def voice_outbound_random():
     response.hangup()
     return str(response)
 
+
 @app.route("/")
 def hello():
     return "It's Frinkiac SMS!"
+
 
 @app.route("/searchdebug", methods=["GET"])
 def search():
@@ -86,6 +92,7 @@ def search():
         </form>
     </body>
 </html>"""
+
 
 @app.route("/searchdebug", methods=["POST"])
 def search_result():
@@ -102,15 +109,19 @@ def search_result():
 
     return search_response
 
+
 @app.route("/random")
 def random_query():
     return _query("#random")
+
 
 @app.route("/randomnocaption")
 def random_query_nocaption():
     return _query("#random #nocaption")
 
 # Perform a query
+
+
 def _query(querystr, tml=False, mid=None):
     frame = frinkcommands.do_stuff(querystr)
     if tml:
@@ -121,6 +132,8 @@ def _query(querystr, tml=False, mid=None):
     return response
 
 # Format a frame into a TwiML
+
+
 def _twiml(frame):
     response = twilio.twiml.Response()
     if (frame["callme"]):
@@ -138,15 +151,17 @@ def _twiml(frame):
     return str(response)
 
 # Format a frame with HTML
+
+
 def _basic_html(frame):
     if (frame["callme"]):
         sound = random.choice(simpsonsvoice.SIMPSONS_CLIPS)
         return """<html><body><a href="{}">sound</a></body></html""".format(sound)
     if not frame["error"]:
-            return """<html><body>
+        return """<html><body>
 <img src='{}'/><br/>
 <h3>{}</h3>
-</body></html>""".format(frame["imageurl"], frame["message"].replace("\n","</h3><h3>").encode('utf8'))
+</body></html>""".format(frame["imageurl"], frame["message"].replace("\n", "</h3><h3>").encode('utf8'))
     else:
         return """<h3>There was an error or info:</h3><br/><bold><pre>{}</pre></bold>""".format(frame["message"])
 
